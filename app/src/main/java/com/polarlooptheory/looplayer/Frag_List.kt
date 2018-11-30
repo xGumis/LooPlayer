@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -47,6 +48,11 @@ class Frag_List : Fragment() {
         val act = activity
         findMusic()
         viewManager = LinearLayoutManager(act)
+        if(savedInstanceState!=null){
+            val state: Parcelable? = savedInstanceState.getParcelable("Key")
+            if(state!=null)
+                viewManager.onRestoreInstanceState(state)
+        }
         viewAdapter = MyAdapter(list){activityCallback?.onButtonClick(it)}
         recyclerView = view.findViewById<RecyclerView>(R.id.main).apply {
             setHasFixedSize(true)
@@ -55,6 +61,12 @@ class Frag_List : Fragment() {
         }
         return view
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("Key",viewManager.onSaveInstanceState())
+    }
+
     fun findMusic() {
         val contRes: ContentResolver = context!!.contentResolver
         val songUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
