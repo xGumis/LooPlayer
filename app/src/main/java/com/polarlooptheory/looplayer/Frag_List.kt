@@ -1,6 +1,5 @@
 package com.polarlooptheory.looplayer
 
-
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
@@ -18,13 +17,13 @@ import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.item.view.*
 import java.lang.ClassCastException
 
-class List_Fragment : Fragment() {
+class Frag_List : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     var list: ArrayList<Map<String, String>> = ArrayList()
-    var activityCallback: List_Fragment.Listener? = null
+    var activityCallback: Listener? = null
 
     interface  Listener{
         fun onButtonClick(pos: Int)
@@ -82,8 +81,8 @@ class List_Fragment : Fragment() {
 
         class MyViewHolder(val hold: LinearLayout) : RecyclerView.ViewHolder(hold)
 
-        override fun onCreateViewHolder(parent: ViewGroup,viewType: Int):
-                MyAdapter.MyViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
+                MyViewHolder {
             val hold = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item, parent, false) as LinearLayout
             return MyViewHolder(hold)
