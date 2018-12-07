@@ -42,7 +42,7 @@ class Main : FragmentActivity(), Frag_List.Listener {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "Permission to record denied")
             makeRequest()
-        }
+        }else use_List()
     }
     private fun makeRequest() {
         ActivityCompat.requestPermissions(this,
