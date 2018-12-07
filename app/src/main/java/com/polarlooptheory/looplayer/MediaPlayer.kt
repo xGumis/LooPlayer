@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_media_player.*
 
 class MediaPlayer : Fragment() {
@@ -37,12 +38,15 @@ class MediaPlayer : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.activity_media_player,container,false)
-        val id = activityCallback!!.getId()
+        var id = activityCallback!!.getId()
         val con = activity!!.applicationContext
+        var resume = false
         map = activityCallback!!.getMap(id)
         mp = MediaPlayer.create(con,Uri.parse(map["path"]))
         var position = 0
         initializeSeekBar(view)
+        initializeTitle(view)
+        mp.start()
 
         view.findViewById<ImageButton>(R.id.playButton).setImageResource(android.R.drawable.ic_media_play)
         view.findViewById<ImageButton>(R.id.playButton).setOnClickListener {
@@ -65,8 +69,8 @@ class MediaPlayer : Fragment() {
         }
 
 
-        view.findViewById<ImageButton>(R.id.prevButton).setImageResource(android.R.drawable.ic_media_previous)
-        view.findViewById<ImageButton>(R.id.prevButton).setOnClickListener {
+        view.findViewById<ImageButton>(R.id.reverseButton).setImageResource(android.R.drawable.ic_media_rew)
+        view.findViewById<ImageButton>(R.id.reverseButton).setOnClickListener {
             position = mp.currentPosition
             if (position <= 5000) {
                 mp.seekTo(0)
@@ -78,8 +82,8 @@ class MediaPlayer : Fragment() {
         }
 
 
-        view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
-        view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
+        view.findViewById<ImageButton>(R.id.forwardButton).setImageResource(android.R.drawable.ic_media_ff)
+        view.findViewById<ImageButton>(R.id.forwardButton).setOnClickListener {
             position = mp.currentPosition
             if (position + 5000 >= mp.duration) {
                 mp.pause()
@@ -88,6 +92,29 @@ class MediaPlayer : Fragment() {
                 mp.seekTo(position + 5000)
                 position += 5000
             }
+        }
+
+        view.findViewById<ImageButton>(R.id.prevButton).setImageResource(android.R.drawable.ic_media_previous)
+        view.findViewById<ImageButton>(R.id.prevButton).setOnClickListener {
+            resume = mp.isPlaying
+            mp.stop()
+            map = activityCallback!!.getMap(id+1)
+            mp = MediaPlayer.create(con,Uri.parse(map["path"]))
+            position = 0
+            initializeSeekBar(view)
+            initializeTitle(view)
+            if(resume) mp.start()
+        }
+
+        view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
+        view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
+            resume = mp.isPlaying
+            mp.stop()
+            mp = MediaPlayer.create(con,Uri.parse(map["path"]))
+            position = 0
+            initializeSeekBar(view)
+            initializeTitle(view)
+            if(resume) mp.start()
         }
 
         view.findViewById<SeekBar>(R.id.seekBar2).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -126,6 +153,13 @@ class MediaPlayer : Fragment() {
         }
         handler.postDelayed(runnable, 1000)
     }
+
+    private fun initializeTitle(view: View){
+        view.findViewById<TextView>(R.id.tytul).text = map["title"]
+        view.findViewById<TextView>(R.id.wykonawca).text = map["artist"]
+        view.findViewById<TextView>(R.id.album).text = map["album"]
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mp.release()
