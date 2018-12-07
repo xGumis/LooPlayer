@@ -97,8 +97,9 @@ class MediaPlayer : Fragment() {
         view.findViewById<ImageButton>(R.id.prevButton).setImageResource(android.R.drawable.ic_media_previous)
         view.findViewById<ImageButton>(R.id.prevButton).setOnClickListener {
             resume = mp.isPlaying
-            mp.stop()
-            map = activityCallback!!.getMap(id+1)
+            mp.reset()
+            id-=1
+            map = activityCallback!!.getMap(id)
             mp = MediaPlayer.create(con,Uri.parse(map["path"]))
             position = 0
             initializeSeekBar(view)
@@ -109,13 +110,26 @@ class MediaPlayer : Fragment() {
         view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
         view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
             resume = mp.isPlaying
-            mp.stop()
+            mp.reset()
+            id+=1
+            map = activityCallback!!.getMap(id)
             mp = MediaPlayer.create(con,Uri.parse(map["path"]))
             position = 0
             initializeSeekBar(view)
             initializeTitle(view)
             if(resume) mp.start()
         }
+
+        mp.setOnCompletionListener(MediaPlayer.OnCompletionListener() {
+            mp.reset()
+            id+=1
+            map = activityCallback!!.getMap(id)
+            mp = MediaPlayer.create(con,Uri.parse(map["path"]))
+            position = 0
+            initializeSeekBar(view)
+            initializeTitle(view)
+            mp.start()
+        })
 
         view.findViewById<SeekBar>(R.id.seekBar2).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -149,9 +163,9 @@ class MediaPlayer : Fragment() {
             if(diffsec<10) zostao.text = "$diffmin:0$diffsec"
             else zostao.text = "$diffmin:$diffsec"
 
-            handler.postDelayed(runnable, 1000)
+            handler.postDelayed(runnable, 100)
         }
-        handler.postDelayed(runnable, 1000)
+        handler.postDelayed(runnable, 100)
     }
 
     private fun initializeTitle(view: View){
