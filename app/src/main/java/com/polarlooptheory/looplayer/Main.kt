@@ -2,6 +2,7 @@ package com.polarlooptheory.looplayer
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v4.app.ActivityCompat
@@ -10,10 +11,19 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.util.Log
 
-class Main : FragmentActivity(), Frag_List.Listener {
+class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
+
+    override fun getId(): Int {
+        return id
+    }
+
+    override fun getMap(pos: Int): Map<String, String> {
+        return list[pos]
+    }
 
     var list: ArrayList<Map<String,String>> = ArrayList()
     private lateinit var frag: Fragment
+    private var id: Int = -1
     private var perm: Perm = Perm.BLOCK
     private var state: State = State.PLAYER
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +56,10 @@ class Main : FragmentActivity(), Frag_List.Listener {
         }
     }
     override fun onButtonClick(pos: Int) {
-        println(list[pos].getValue("title"))
-        //TODO("połączenie fragmentów")
+        frag = MediaPlayer()
+        id = pos
+        supportFragmentManager.beginTransaction().replace(R.id.mainframe,frag).commit()
+        state = State.PLAYER
     }
     override fun getList(list: ArrayList<Map<String, String>>) {
         this.list = list

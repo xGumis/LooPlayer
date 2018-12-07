@@ -1,33 +1,51 @@
 package com.polarlooptheory.looplayer
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Handler
-import android.view.View
-import android.widget.SeekBar
 import android.widget.ImageButton
-
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.SeekBar
 import kotlinx.android.synthetic.main.activity_media_player.*
 
-class MediaPlayer : AppCompatActivity() {
+class MediaPlayer : Fragment() {
 
     private lateinit var mp: MediaPlayer
     private lateinit var runnable: Runnable
+    private lateinit var map: Map<String,String>
     private var handler: Handler = Handler()
+    var activityCallback: Listener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_media_player)
+    interface Listener{
+        fun getMap(pos: Int): Map<String,String>
+        fun getId(): Int
+    }
 
-        mp = MediaPlayer.create(this, R.raw.test)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        try{
+            activityCallback = context as Listener
+        }catch(e: ClassCastException){
+            throw ClassCastException(context?.toString()+" must implement Listener")
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.activity_media_player,container,false)
+        val id = activityCallback!!.getId()
+        val con = activity!!.applicationContext
+        map = activityCallback!!.getMap(id)
+        mp = MediaPlayer.create(con,Uri.parse(map["path"]))
         var position = 0
-        initializeSeekBar()
+        initializeSeekBar(view)
 
-
-        playButton.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.playButton).setImageResource(android.R.drawable.ic_media_play)
+        view.findViewById<ImageButton>(R.id.playButton).setOnClickListener {
             if (!mp.isPlaying) {
                 mp.seekTo(position)
                 mp.start()
@@ -36,7 +54,8 @@ class MediaPlayer : AppCompatActivity() {
             }
         }
 
-        pauseButton.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.pauseButton).setImageResource(android.R.drawable.ic_media_pause)
+        view.findViewById<ImageButton>(R.id.pauseButton).setOnClickListener {
             if (mp.isPlaying) {
                 position = mp.currentPosition
                 mp.pause()
@@ -45,7 +64,9 @@ class MediaPlayer : AppCompatActivity() {
             }
         }
 
-        prevButton.setOnClickListener {
+
+        view.findViewById<ImageButton>(R.id.prevButton).setImageResource(android.R.drawable.ic_media_previous)
+        view.findViewById<ImageButton>(R.id.prevButton).setOnClickListener {
             position = mp.currentPosition
             if (position <= 5000) {
                 mp.seekTo(0)
@@ -56,7 +77,9 @@ class MediaPlayer : AppCompatActivity() {
             }
         }
 
-        nextButton.setOnClickListener {
+
+        view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
+        view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
             position = mp.currentPosition
             if (position + 5000 >= mp.duration) {
                 mp.pause()
@@ -67,28 +90,27 @@ class MediaPlayer : AppCompatActivity() {
             }
         }
 
-        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        view.findViewById<SeekBar>(R.id.seekBar2).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     mp.seekTo(progress * 1000)
                 }
             }
-                override fun onStartTrackingTouch(seekBar: SeekBar) {
-                }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
 
-                override fun onStopTrackingTouch(seekBar: SeekBar) {
-                }
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+            }
 
         })
-
-
+        return view
     }
-    private fun initializeSeekBar() {
-        seekBar2.max = mp.seconds
+    private fun initializeSeekBar(view: View) {
+        view.findViewById<SeekBar>(R.id.seekBar2).max = mp.seconds
 
 
         runnable = Runnable {
-            seekBar2.progress = mp.currentSeconds
+            view.findViewById<SeekBar>(R.id.seekBar2).progress = mp.currentSeconds
             val minuty = mp.currentSeconds/60
             val sekundy = mp.currentSeconds-minuty*60
 
