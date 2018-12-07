@@ -10,11 +10,28 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="120dp"
+            android:layout_height="wrap_content"
             android:gravity="center" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" android:layout_marginBottom="28dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="0.0">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:gravity="center">
+            <TextView
+                    android:text="0:00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" tools:layout_editor_absoluteY="205dp"
+                    tools:layout_editor_absoluteX="53dp" android:id="@+id/ubyo"/>
+            <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="1"/>
+            <TextView
+                    android:text="0:00"
+                    android:layout_height="wrap_content" android:id="@+id/zostao"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
         <SeekBar
                 android:layout_width="match_parent"
                 android:id="@+id/seekBar2"
@@ -26,7 +43,7 @@
                 android:layout_height="20dp"/>
         <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="356dp"
+                android:layout_width="285dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:id="@+id/linearLayout"
@@ -58,4 +75,29 @@
                     android:id="@+id/nextButton"/>
         </LinearLayout>
     </LinearLayout>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="37dp"
+            tools:layout_editor_absoluteX="119dp" android:id="@+id/textView3"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="63dp"
+            tools:layout_editor_absoluteX="117dp" android:id="@+id/textView4"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="93dp"
+            tools:layout_editor_absoluteX="119dp" android:id="@+id/textView5"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="121dp"
+            tools:layout_editor_absoluteX="119dp" android:id="@+id/textView6"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="159dp"
+            tools:layout_editor_absoluteX="119dp" android:id="@+id/textView7"/>
 </android.support.constraint.ConstraintLayout>

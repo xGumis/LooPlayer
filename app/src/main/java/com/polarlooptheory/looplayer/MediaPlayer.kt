@@ -27,7 +27,6 @@ class MediaPlayer : AppCompatActivity() {
         initializeSeekBar()
 
 
-
         playButton.setOnClickListener {
             if (!mp.isPlaying) {
                 mp.seekTo(position)
@@ -87,8 +86,19 @@ class MediaPlayer : AppCompatActivity() {
     private fun initializeSeekBar() {
         seekBar2.max = mp.seconds
 
+
         runnable = Runnable {
             seekBar2.progress = mp.currentSeconds
+            val minuty = mp.currentSeconds/60
+            val sekundy = mp.currentSeconds-minuty*60
+
+            if(sekundy<10) ubyo.text = "$minuty:0$sekundy"
+            else ubyo.text = "$minuty:$sekundy"
+            val diff = mp.seconds - mp.currentSeconds
+            val diffmin = diff/60
+            val diffsec = diff-diffmin*60
+            if(diffsec<10) zostao.text = "$diffmin:0$diffsec"
+            else zostao.text = "$diffmin:$diffsec"
 
             handler.postDelayed(runnable, 1000)
         }
