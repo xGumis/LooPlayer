@@ -115,6 +115,8 @@ class MediaPlayer : Fragment() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     mp.seekTo(progress * 1000)
+                    position=mp.currentPosition
+
                 }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
