@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import kotlin.system.exitProcess
 
 class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
 
@@ -28,7 +29,6 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
     var list: ArrayList<Map<String,String>> = ArrayList()
     private lateinit var frag: Fragment
     private var id: Int = -1
-    private var perm: Perm = Perm.BLOCK
     private var state: State = State.PLAYER
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,13 +37,6 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
         if(ord!=null)
             state = State.values()[ord]
         setupPermissions()
-        WaitOrDo()
-    }
-    private fun WaitOrDo(){
-        while(perm==Perm.BLOCK){
-            Thread.sleep(1000)
-        }
-        use_List()
     }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
@@ -62,7 +55,7 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
     override fun onButtonClick(pos: Int) {
         frag = MediaPlayer()
         id = pos
-        supportFragmentManager.beginTransaction().add(R.id.mainframe,frag).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.mainframe,frag).commit()
         state = State.PLAYER
     }
     override fun getList(list: ArrayList<Map<String, String>>) {
@@ -78,7 +71,7 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "Permission to record denied")
             makeRequest()
-        }else perm = Perm.GRANT
+        }else use_List()
     }
     private fun makeRequest() {
         ActivityCompat.requestPermissions(this,
@@ -95,12 +88,20 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
                     Log.i(TAG, "Permission has been denied by user")
                 } else {
                     Log.i(TAG, "Permission has been granted by user")
-                    perm = Perm.GRANT
+                    use_List()
                 }
             }
         }
     }
+
     //endregion
-    enum class Perm{GRANT,BLOCK}
+    override fun onBackPressed() {
+        if(state == State.PLAYER){
+            use_List()
+        }else{
+            exitProcess(0)
+        }
+    }
+
     enum class State{LIST,PLAYER}
 }

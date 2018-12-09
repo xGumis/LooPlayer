@@ -70,7 +70,7 @@ class Frag_List : Fragment() {
     fun findMusic() {
         val contRes: ContentResolver = context!!.contentResolver
         val songUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val cursor: Cursor? = contRes.query(songUri, null, null, null, null)
+        val cursor: Cursor? = contRes.query(songUri, null, null, null, MediaStore.Audio.Media.TITLE+" ASC")
         if (cursor != null && cursor.moveToFirst()) {
             val title = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
             val artist = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
@@ -104,7 +104,6 @@ class Frag_List : Fragment() {
             holder.hold.title.text = myDataset[position].getValue("title")
             holder.hold.artist.text = myDataset[position].getValue("artist")
             holder.hold.album.text = myDataset[position].getValue("album")
-            holder.hold.test.text = myDataset[position].getValue("path")
             holder.hold.setOnClickListener{listener(position)}
         }
 

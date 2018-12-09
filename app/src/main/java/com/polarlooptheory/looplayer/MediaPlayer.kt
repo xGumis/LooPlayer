@@ -189,6 +189,7 @@ class MediaPlayer : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacks(runnable)
         mp.release()
     }
 
@@ -203,6 +204,4 @@ class MediaPlayer : Fragment() {
         get() {
             return this.currentPosition/1000
         }
-
-
 }
