@@ -16,9 +16,11 @@ import kotlinx.android.synthetic.main.activity_media_player.*
 
 class MediaPlayer : Fragment() {
 
-    private lateinit var mp: MediaPlayer
+    private var mp = MediaPlayer()
     private lateinit var runnable: Runnable
     private lateinit var map: Map<String,String>
+    private var songid = 0
+    private var position = 0
     private var handler: Handler = Handler()
     var activityCallback: Listener? = null
 
@@ -39,15 +41,11 @@ class MediaPlayer : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.activity_media_player,container,false)
-        var id = activityCallback!!.getId()
+        songid = activityCallback!!.getId()
         val con = activity!!.applicationContext
-        var resume = false
-        map = activityCallback!!.getMap(id)
-        mp = MediaPlayer.create(con,Uri.parse(map["path"]))
-        var position = 0
-        initializeSeekBar(view)
-        initializeTitle(view)
-        mp.start()
+        var resume = true
+        position = 0
+        Play(resume,view,con,songid)
 
         view.findViewById<ImageButton>(R.id.playButton).setImageResource(android.R.drawable.ic_media_play)
         view.findViewById<ImageButton>(R.id.playButton).setOnClickListener {
@@ -97,51 +95,20 @@ class MediaPlayer : Fragment() {
 
         view.findViewById<ImageButton>(R.id.prevButton).setImageResource(android.R.drawable.ic_media_previous)
         view.findViewById<ImageButton>(R.id.prevButton).setOnClickListener {
-            if(id-1<0){
-                mp.seekTo(0)
-                mp.start()
-            }
-            else {
-                resume = mp.isPlaying
-                mp.reset()
-                id -= 1
-                map = activityCallback!!.getMap(id)
-                mp = MediaPlayer.create(con, Uri.parse(map["path"]))
-                position = 0
-                initializeSeekBar(view)
-                initializeTitle(view)
-                if (resume) mp.start()
-            }
+            if(songid-1<0){songid=activityCallback!!.getListSize()-1}
+            else {songid--}
+            resume = mp.isPlaying
+            position = 0
+            Play(resume,view,con,songid)
         }
 
         view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
         view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
-            if(id+1==activityCallback!!.getListSize()){
-                mp.seekTo(0)
-                mp.start()
-            }
-            else {
-                resume = mp.isPlaying
-                mp.reset()
-                id += 1
-                map = activityCallback!!.getMap(id)
-                mp = MediaPlayer.create(con, Uri.parse(map["path"]))
-                position = 0
-                initializeSeekBar(view)
-                initializeTitle(view)
-                if (resume) mp.start()
-            }
-        }
-
-        mp.setOnCompletionListener {
-            mp.reset()
-            id+=1
-            map = activityCallback!!.getMap(id)
-            mp = MediaPlayer.create(con,Uri.parse(map["path"]))
+            if(songid+1>activityCallback!!.getListSize()-1){songid=0}
+            else {songid++}
+            resume = mp.isPlaying
             position = 0
-            initializeSeekBar(view)
-            initializeTitle(view)
-            mp.start()
+            Play(resume,view,con,songid)
         }
 
         view.findViewById<SeekBar>(R.id.seekBar2).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -185,6 +152,21 @@ class MediaPlayer : Fragment() {
         view.findViewById<TextView>(R.id.tytul).text = map["title"]
         view.findViewById<TextView>(R.id.wykonawca).text = map["artist"]
         view.findViewById<TextView>(R.id.album).text = map["album"]
+    }
+
+    private fun Play(resume: Boolean,view: View,context: Context,id : Int){
+        map = activityCallback!!.getMap(id)
+        mp.reset()
+        mp = MediaPlayer.create(context, Uri.parse(map["path"]))
+        initializeSeekBar(view)
+        initializeTitle(view)
+        if (resume) mp.start()
+        mp.setOnCompletionListener {
+            if(songid+1>activityCallback!!.getListSize()-1){songid=0}
+            else {songid++}
+            position = 0
+            Play(resume,view,context,songid)
+        }
     }
 
     override fun onDestroy() {
