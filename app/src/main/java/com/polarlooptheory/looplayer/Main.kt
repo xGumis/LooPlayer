@@ -58,7 +58,7 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
     override fun onButtonClick(pos: Int) {
         frag = MediaPlayer()
         id = pos
-        supportFragmentManager.beginTransaction().replace(R.id.mainframe,frag).commit()
+        supportFragmentManager.beginTransaction().add(R.id.mainframe,frag).addToBackStack(null).commit()
         state = State.PLAYER
     }
     override fun getList(list: ArrayList<Map<String, String>>) {

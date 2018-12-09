@@ -96,28 +96,40 @@ class MediaPlayer : Fragment() {
 
         view.findViewById<ImageButton>(R.id.prevButton).setImageResource(android.R.drawable.ic_media_previous)
         view.findViewById<ImageButton>(R.id.prevButton).setOnClickListener {
-            resume = mp.isPlaying
-            mp.reset()
-            id-=1
-            map = activityCallback!!.getMap(id)
-            mp = MediaPlayer.create(con,Uri.parse(map["path"]))
-            position = 0
-            initializeSeekBar(view)
-            initializeTitle(view)
-            if(resume) mp.start()
+            if(id-1<0){
+                mp.seekTo(0)
+                mp.start()
+            }
+            else {
+                resume = mp.isPlaying
+                mp.reset()
+                id -= 1
+                map = activityCallback!!.getMap(id)
+                mp = MediaPlayer.create(con, Uri.parse(map["path"]))
+                position = 0
+                initializeSeekBar(view)
+                initializeTitle(view)
+                if (resume) mp.start()
+            }
         }
 
         view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
         view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
-            resume = mp.isPlaying
-            mp.reset()
-            id+=1
-            map = activityCallback!!.getMap(id)
-            mp = MediaPlayer.create(con,Uri.parse(map["path"]))
-            position = 0
-            initializeSeekBar(view)
-            initializeTitle(view)
-            if(resume) mp.start()
+            if(id+1>map.size){
+                mp.seekTo(0)
+                mp.start()
+            }
+            else {
+                resume = mp.isPlaying
+                mp.reset()
+                id += 1
+                map = activityCallback!!.getMap(id)
+                mp = MediaPlayer.create(con, Uri.parse(map["path"]))
+                position = 0
+                initializeSeekBar(view)
+                initializeTitle(view)
+                if (resume) mp.start()
+            }
         }
 
         mp.setOnCompletionListener(MediaPlayer.OnCompletionListener() {
