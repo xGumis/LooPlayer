@@ -116,7 +116,7 @@ class MediaPlayer : Fragment() {
 
         view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
         view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
-            if(id+1>activityCallback!!.getListSize()){
+            if(id+1==activityCallback!!.getListSize()){
                 mp.seekTo(0)
                 mp.start()
             }
@@ -133,7 +133,7 @@ class MediaPlayer : Fragment() {
             }
         }
 
-        mp.setOnCompletionListener(MediaPlayer.OnCompletionListener() {
+        mp.setOnCompletionListener {
             mp.reset()
             id+=1
             map = activityCallback!!.getMap(id)
@@ -142,7 +142,7 @@ class MediaPlayer : Fragment() {
             initializeSeekBar(view)
             initializeTitle(view)
             mp.start()
-        })
+        }
 
         view.findViewById<SeekBar>(R.id.seekBar2).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
