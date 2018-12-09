@@ -25,6 +25,7 @@ class MediaPlayer : Fragment() {
     interface Listener{
         fun getMap(pos: Int): Map<String,String>
         fun getId(): Int
+        fun getListSize(): Int
     }
 
     override fun onAttach(context: Context?) {
@@ -115,7 +116,7 @@ class MediaPlayer : Fragment() {
 
         view.findViewById<ImageButton>(R.id.nextButton).setImageResource(android.R.drawable.ic_media_next)
         view.findViewById<ImageButton>(R.id.nextButton).setOnClickListener {
-            if(id+1>map.size){
+            if(id+1>activityCallback!!.getListSize()){
                 mp.seekTo(0)
                 mp.start()
             }

@@ -21,6 +21,10 @@ class Main : FragmentActivity(), Frag_List.Listener, MediaPlayer.Listener {
         return list[pos]
     }
 
+    override fun getListSize(): Int {
+        return list.size
+    }
+
     var list: ArrayList<Map<String,String>> = ArrayList()
     private lateinit var frag: Fragment
     private var id: Int = -1
